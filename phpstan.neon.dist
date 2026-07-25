@@ -1,0 +1,48 @@
+includes:
+    - vendor/szepeviktor/phpstan-wordpress/extension.neon
+
+parameters:
+    level: 5
+    paths:
+        - src
+        - unused-image-cleaner.php
+        - uninstall.php
+
+    bootstrapFiles:
+        - tests/phpstan-bootstrap.php
+
+    # These patterns cover known, accepted categories (stub gaps, $wpdb's
+    # untyped rows) rather than one specific line, so a given pattern will
+    # not always have a live match — that is expected, not a sign one of
+    # them has gone stale.
+    reportUnmatchedIgnoredErrors: false
+
+    ignoreErrors:
+        # Repository methods return stdClass rows from $wpdb, which PHPStan
+        # cannot type without a full schema map. The shapes are documented in
+        # each method's docblock instead. PHPStan phrases this two ways
+        # depending on how the row was narrowed (a direct property access vs.
+        # one reached through a `list()` destructure), so both are ignored.
+        - '#Cannot access property \$[a-z_]+ on object\|null#'
+        - '#Access to an undefined property object::\$[a-z_]+#'
+
+        # WP-CLI is an optional runtime dependency: WP_CLI only exists when
+        # the CLI is the one loading the plugin, guarded at the call site by
+        # `defined( 'WP_CLI' )`. The wordpress-stubs package this project
+        # already depends on does not ship WP-CLI's stubs, and adding a whole
+        # second stub package for one optional integration is not worth it.
+        # Scoped to the two files that touch WP_CLI, so this cannot hide an
+        # unrelated "unknown class" error elsewhere.
+        -
+            message: '#WP_CLI#'
+            paths:
+                - src/API/CLI/ScanCommand.php
+                - src/Core/Plugin.php
+
+        # wp_get_attachment_metadata() can return an `original_image` key —
+        # WordPress 5.3+ adds it for a scaled original — but the stub's
+        # return type does not model optional keys, only the ones every
+        # image always has. Real, documented WordPress behaviour; a stub gap,
+        # not a bug in the code reading it.
+        - '#Offset ''original_image'' on array\{.*\} in empty\(\) does not exist#'
+        - '#Offset ''original_image'' does not exist on array\{.*\}#'

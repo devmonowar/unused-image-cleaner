@@ -1,0 +1,41 @@
+# OS
+Thumbs.db
+.DS_Store
+
+# Editor
+.vscode/
+.idea/
+*.swp
+
+# Claude
+.claude/settings.local.json
+
+# Dependencies — installed, never committed.
+# composer.lock and package-lock.json ARE committed, deliberately:
+# they are what make a build reproducible.
+/vendor/
+/node_modules/
+
+# Build output — the distributable is generated, not stored
+/build/
+/dist/
+*.zip
+
+# Tooling caches
+.phpunit.result.cache
+.phpcs-cache
+.php-cs-fixer.cache
+.phpunit.cache/
+
+# Local overrides — a machine-specific config is never shared.
+# The committed versions are phpunit.xml.dist / phpcs.xml.dist / phpstan.neon
+.env
+.env.local
+phpunit.xml
+phpcs.xml
+phpstan.neon.local
+*.local.php
+
+# Local WordPress test environment
+/wordpress/
+/wp-tests-config.php

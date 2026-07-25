@@ -1,0 +1,50 @@
+{
+	"name": "devmonowar/unused-image-cleaner",
+	"description": "Finds unused images and removes them safely — by proving they are unused first.",
+	"type": "wordpress-plugin",
+	"license": "GPL-2.0-or-later",
+	"require": {
+		"php": ">=7.4"
+	},
+	"require-dev": {
+		"squizlabs/php_codesniffer": "^3.7",
+		"wp-coding-standards/wpcs": "^3.0",
+		"phpstan/phpstan": "^1.10",
+		"szepeviktor/phpstan-wordpress": "^1.3"
+	},
+	"autoload": {
+		"psr-4": {
+			"UnusedImageCleaner\\": "src/"
+		}
+	},
+	"config": {
+		"allow-plugins": {
+			"dealerdirect/phpcodesniffer-composer-installer": true
+		}
+	},
+	"scripts": {
+		"lint": "phpcs",
+		"lint:fix": "phpcbf",
+		"analyse": "phpstan analyse",
+		"test": [
+			"php tests/invariants.php",
+			"php tests/recommendation-grid.php",
+			"php tests/risk-engine.php",
+			"php tests/confidence-engine.php",
+			"php tests/explanation.php",
+			"php tests/image-key-hints.php",
+			"php tests/dynamic-tags.php",
+			"php tests/scan-history.php",
+			"php tests/declared-image-fields.php"
+		],
+		"check": [
+			"@test",
+			"@analyse",
+			"@lint"
+		]
+	},
+	"scripts-descriptions": {
+		"test": "Assert the safety invariants hold. Needs no WordPress and no database.",
+		"check": "Everything: invariants, static analysis, coding standards."
+	}
+}

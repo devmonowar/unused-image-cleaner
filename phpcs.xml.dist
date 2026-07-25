@@ -1,0 +1,90 @@
+<?xml version="1.0"?>
+<ruleset name="Unused Image Cleaner">
+	<description>WordPress Coding Standards for this plugin.</description>
+
+	<file>src</file>
+	<file>unused-image-cleaner.php</file>
+	<file>uninstall.php</file>
+
+	<exclude-pattern>*/vendor/*</exclude-pattern>
+	<exclude-pattern>*/node_modules/*</exclude-pattern>
+
+	<arg name="extensions" value="php"/>
+	<arg name="colors"/>
+	<arg value="ps"/>
+
+	<rule ref="WordPress">
+		<!--
+			The plugin queries its own tables and reads WordPress's directly for
+			bulk work. Both are deliberate: the scanner layer's entire design
+			rests on making ONE pass rather than one query per image, which
+			cannot be expressed through the high-level APIs.
+		-->
+		<exclude name="WordPress.DB.DirectDatabaseQuery.DirectQuery"/>
+		<exclude name="WordPress.DB.DirectDatabaseQuery.NoCaching"/>
+		<exclude name="WordPress.DB.DirectDatabaseQuery.SchemaChange"/>
+
+		<!--
+			Table names are interpolated from $wpdb->prefix, never from input.
+			The NotPrepared variant also fires on two further, individually
+			verified-safe shapes in ScanRepository: a $sql string assembled
+			from literal fragments (only %d/%s placeholders, values always
+			passed through prepare()'s own $args), and $rows arrays whose
+			elements are themselves already the output of a per-row
+			$wpdb->prepare() call, joined for a bulk INSERT. Neither sniff can
+			trace either pattern statically.
+		-->
+		<exclude name="WordPress.DB.PreparedSQL.InterpolatedNotPrepared"/>
+		<exclude name="WordPress.DB.PreparedSQL.NotPrepared"/>
+
+		<!--
+			plugin-structure.md is explicit: PSR-4 autoloading, PascalCase.php
+			files matching the class name exactly. These two sniffs enforce the
+			OPPOSITE — the hyphenated-lowercase, class-prefixed naming of
+			old-style procedural WordPress plugins — and would fire on every
+			single class in src/.
+		-->
+		<exclude name="WordPress.Files.FileName.NotHyphenatedLowercase"/>
+		<exclude name="WordPress.Files.FileName.InvalidClassFileName"/>
+
+		<!--
+			"uic"/"UIC" is the plugin's real, already-shipped prefix — every
+			constant, hook, and text domain reference already uses it. The
+			sniff would rather it were 4+ characters, but renaming it now
+			would touch every filter and action name a site might already be
+			hooked into. Not a per-instance issue; this fires once for the
+			prefix configuration itself, not for a specific line of code.
+		-->
+		<exclude name="WordPress.NamingConventions.PrefixAllGlobals.ShortPrefixPassed"/>
+
+		<!--
+			Same root cause: the sniff will not credit a match against a
+			prefix it has already flagged as too short, so UIC_VERSION et al.
+			still report as unprefixed even with "UIC" registered above.
+		-->
+		<exclude name="WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound"/>
+		<exclude name="WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound"/>
+	</rule>
+
+	<config name="minimum_wp_version" value="6.0"/>
+
+	<rule ref="WordPress.WP.I18n">
+		<properties>
+			<property name="text_domain" type="array">
+				<element value="unused-image-cleaner"/>
+			</property>
+		</properties>
+	</rule>
+
+	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
+		<properties>
+			<property name="prefixes" type="array">
+				<!-- The sniff matches case-sensitively; the plugin's constants
+				     (UIC_VERSION, UIC_FILE, UIC_PATH) are upper-case. -->
+				<element value="UIC"/>
+				<element value="uic"/>
+				<element value="UnusedImageCleaner"/>
+			</property>
+		</properties>
+	</rule>
+</ruleset>

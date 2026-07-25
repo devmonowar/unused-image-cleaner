@@ -562,6 +562,7 @@ final class ImageDetailsPage {
 				'post_status'      => 'any',
 				'numberposts'      => -1,
 				'fields'           => 'ids',
+				// phpcs:ignore WordPressVIPMinimum.Performance.WPQueryParams.SuppressFilters_suppress_filters -- deliberate: a third-party query filter (translation/multisite ID remapping, a visibility filter) could hide a post that genuinely still exists, and this method's only job is "does this reference still exist". Trusting a filtered result here risks concluding a real reference is gone, which would make the plugin recommend Trash for a used image — exactly the failure mode this plugin is built never to produce.
 				'suppress_filters' => true,
 			)
 		);

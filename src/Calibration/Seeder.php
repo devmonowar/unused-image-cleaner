@@ -244,6 +244,7 @@ final class Seeder {
 				'numberposts'      => -1,
 				'fields'           => 'ids',
 				'meta_key'         => self::MARKER, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- there is no other way to find fixtures by their marker; this runs only on demand from WP-CLI, never on a request.
+				// phpcs:ignore WordPressVIPMinimum.Performance.WPQueryParams.SuppressFilters_suppress_filters -- deliberate: this sweeps the plugin's own marker-tagged test fixtures, on demand from WP-CLI only, never on a live request; a third-party visibility filter has no reason to apply here and would only risk leaving a stray fixture behind.
 				'suppress_filters' => true,
 			)
 		);

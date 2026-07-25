@@ -220,6 +220,7 @@ final class ScanRepository {
 
 		global $wpdb;
 
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- $table/$columns are always hardcoded (a Tables::*() identifier and a literal column list); every value in $rows was already individually escaped via $wpdb->prepare() by the caller before being joined here.
 		$wpdb->query( "INSERT INTO {$table} {$columns} VALUES " . implode( ',', $rows ) );
 	}
 
@@ -235,6 +236,7 @@ final class ScanRepository {
 		global $wpdb;
 
 		return $wpdb->get_row(
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Tables::scans() returns a hardcoded prefix+literal identifier (see src/Database/Tables.php), never user input.
 			$wpdb->prepare( 'SELECT * FROM ' . Tables::scans() . ' WHERE id = %d', $scan_id )
 		);
 	}
@@ -295,6 +297,7 @@ final class ScanRepository {
 		global $wpdb;
 
 		return $wpdb->get_row(
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Tables::scans() returns a hardcoded prefix+literal identifier (see src/Database/Tables.php), never user input; the rest of the query has no variables at all.
 			'SELECT * FROM ' . Tables::scans() . " WHERE status = 'completed' ORDER BY id DESC LIMIT 1"
 		);
 	}
@@ -326,6 +329,7 @@ final class ScanRepository {
 
 		$previous = $wpdb->get_var(
 			$wpdb->prepare(
+				// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Tables::scans() returns a hardcoded prefix+literal identifier (see src/Database/Tables.php), never user input.
 				'SELECT id FROM ' . Tables::scans() . " WHERE status = 'completed' AND id < %d ORDER BY id DESC LIMIT 1",
 				$before_scan_id
 			)
@@ -338,6 +342,7 @@ final class ScanRepository {
 		$reports    = Tables::reports();
 		$references = Tables::references();
 
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- $reports/$references are Tables::*() identifiers, hardcoded (see src/Database/Tables.php), never user input.
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
 				"SELECT rep.attachment_id,
@@ -397,6 +402,7 @@ final class ScanRepository {
 
 		$scans = $wpdb->get_results(
 			$wpdb->prepare(
+				// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Tables::scans() returns a hardcoded prefix+literal identifier (see src/Database/Tables.php), never user input.
 				'SELECT id, completed_at, scanner_states FROM ' . Tables::scans() . "
 				 WHERE status = 'completed' AND id < %d
 				 ORDER BY id DESC
@@ -429,6 +435,7 @@ final class ScanRepository {
 
 		$scan_ids = array( (int) $newest->id, (int) $oldest->id );
 
+		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Tables::reports() returns a hardcoded prefix+literal identifier (see src/Database/Tables.php), never user input.
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
 				'SELECT attachment_id, COUNT(*) AS unreferenced_in
@@ -442,6 +449,7 @@ final class ScanRepository {
 				ImageReport::STATUS_USED
 			)
 		);
+		// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 
 		if ( null === $rows ) {
 			return array();
@@ -501,6 +509,7 @@ final class ScanRepository {
 	public function last_seen_used( int $attachment_id ): ?string {
 		global $wpdb;
 
+		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Tables::reports()/Tables::scans() return hardcoded prefix+literal identifiers (see src/Database/Tables.php), never user input.
 		$found = $wpdb->get_var(
 			$wpdb->prepare(
 				'SELECT s.completed_at
@@ -515,6 +524,7 @@ final class ScanRepository {
 				ImageReport::STATUS_USED
 			)
 		);
+		// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 
 		return $found ? (string) $found : null;
 	}
@@ -600,6 +610,7 @@ final class ScanRepository {
 		global $wpdb;
 
 		return $wpdb->get_row(
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Tables::scans() returns a hardcoded prefix+literal identifier (see src/Database/Tables.php), never user input.
 			$wpdb->prepare( 'SELECT * FROM ' . Tables::scans() . ' WHERE id = %d', $scan_id )
 		);
 	}
@@ -616,6 +627,7 @@ final class ScanRepository {
 
 		return $wpdb->get_row(
 			$wpdb->prepare(
+				// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Tables::scans() returns a hardcoded prefix+literal identifier (see src/Database/Tables.php), never user input.
 				'SELECT * FROM ' . Tables::scans() . "
 				 WHERE status = 'completed' AND scanner_fingerprint = %s
 				 ORDER BY id DESC LIMIT 1",
@@ -634,6 +646,7 @@ final class ScanRepository {
 	public function recommendation_counts( int $scan_id ): array {
 		global $wpdb;
 
+		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Tables::reports() returns a hardcoded prefix+literal identifier (see src/Database/Tables.php), never user input.
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
 				'SELECT recommendation, COUNT(*) AS n
@@ -643,6 +656,7 @@ final class ScanRepository {
 				$scan_id
 			)
 		);
+		// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 
 		$out = array();
 
@@ -663,6 +677,7 @@ final class ScanRepository {
 	public function report_for( int $attachment_id ) {
 		global $wpdb;
 
+		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Tables::reports()/Tables::scans() return hardcoded prefix+literal identifiers (see src/Database/Tables.php), never user input.
 		return $wpdb->get_row(
 			$wpdb->prepare(
 				'SELECT r.* FROM ' . Tables::reports() . ' r
@@ -672,6 +687,7 @@ final class ScanRepository {
 				$attachment_id
 			)
 		);
+		// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 	}
 
 	/**
@@ -687,6 +703,7 @@ final class ScanRepository {
 
 		return (array) $wpdb->get_results(
 			$wpdb->prepare(
+				// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Tables::references() returns a hardcoded prefix+literal identifier (see src/Database/Tables.php), never user input.
 				'SELECT * FROM ' . Tables::references() . '
 				 WHERE scan_id = %d AND attachment_id = %d
 				 ORDER BY strength DESC',
@@ -724,6 +741,7 @@ final class ScanRepository {
 			$args[] = $limit;
 		}
 
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- $sql is built only from hardcoded literals and $table (Tables::reports(), never user input); every real value is passed through $wpdb->prepare() via $args.
 		return (array) $wpdb->get_results( $wpdb->prepare( $sql, $args ) );
 	}
 
@@ -852,6 +870,7 @@ final class ScanRepository {
 		// History screen is an archive of finished scans, not a progress feed.
 		return (array) $wpdb->get_results(
 			$wpdb->prepare(
+				// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Tables::scans() returns a hardcoded prefix+literal identifier (see src/Database/Tables.php), never user input.
 				'SELECT * FROM ' . Tables::scans() . ' WHERE completed_at IS NOT NULL ORDER BY id DESC LIMIT %d',
 				$limit
 			)
@@ -878,6 +897,7 @@ final class ScanRepository {
 
 		$placeholders = implode( ',', array_fill( 0, count( $scan_ids ), '%d' ) );
 
+		// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Tables::reports() is a hardcoded identifier; $placeholders is a programmatically-built string of literal '%d' repeated count($scan_ids) times, each filled in by $wpdb->prepare() below — the standard WordPress pattern for a variable-length IN() clause.
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
 				'SELECT scan_id, SUM( CASE WHEN recommendation = %s THEN filesize ELSE 0 END ) AS recoverable
@@ -887,6 +907,7 @@ final class ScanRepository {
 				array_merge( array( 'move_to_trash' ), $scan_ids )
 			)
 		);
+		// phpcs:enable WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 
 		$out = array();
 
@@ -927,6 +948,7 @@ final class ScanRepository {
 
 		$cutoff = $wpdb->get_var(
 			$wpdb->prepare(
+				// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Tables::scans() returns a hardcoded prefix+literal identifier (see src/Database/Tables.php), never user input.
 				'SELECT id FROM ' . Tables::scans() . ' ORDER BY id DESC LIMIT 1 OFFSET %d',
 				$keep
 			)
@@ -938,9 +960,13 @@ final class ScanRepository {
 
 		$cutoff = (int) $cutoff;
 
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- each Tables::*() call returns a hardcoded prefix+literal identifier (see src/Database/Tables.php), never user input.
 		$wpdb->query( $wpdb->prepare( 'DELETE FROM ' . Tables::references() . ' WHERE scan_id <= %d', $cutoff ) );
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- same as above.
 		$wpdb->query( $wpdb->prepare( 'DELETE FROM ' . Tables::reports() . ' WHERE scan_id <= %d', $cutoff ) );
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- same as above.
 		$wpdb->query( $wpdb->prepare( 'DELETE FROM ' . Tables::logs() . ' WHERE scan_id <= %d', $cutoff ) );
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- same as above.
 		$wpdb->query( $wpdb->prepare( 'DELETE FROM ' . Tables::scans() . ' WHERE id <= %d', $cutoff ) );
 	}
 }

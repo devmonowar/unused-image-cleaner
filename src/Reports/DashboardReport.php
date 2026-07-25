@@ -101,6 +101,7 @@ final class DashboardReport {
 
 		$table = Tables::reports();
 
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- $table is Tables::reports(), a hardcoded prefix+literal identifier (see src/Database/Tables.php), never user input.
 		return array(
 			// Unused AND dangerous — the combination that matters. A used image
 			// at Critical risk is not a problem; it is a correctly-kept image.
@@ -174,6 +175,7 @@ final class DashboardReport {
 
 		$table = Tables::reports();
 
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- $table is Tables::reports(), a hardcoded prefix+literal identifier (see src/Database/Tables.php), never user input.
 		$row = $wpdb->get_row(
 			$wpdb->prepare(
 				"SELECT SUM( filesize ) AS total,

@@ -478,6 +478,7 @@ final class ImageValueExtractor {
 		 *
 		 * @param string[] $hints Lowercase fragments, matched as substrings.
 		 */
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- already carries the plugin's real prefix, "uic_"; the sniff expects the full "unused_image_cleaner_" form.
 		$added = apply_filters( 'uic_image_key_hints', self::IMAGE_KEY_HINTS );
 
 		$clean = array();

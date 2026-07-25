@@ -1,8 +1,8 @@
 === Unused Image Cleaner ===
-Contributors: devmonowar
+Contributors: kstmonowar
 Tags: media, cleanup, unused images, media library, storage
 Requires at least: 6.0
-Tested up to: 6.8
+Tested up to: 7.0
 Requires PHP: 7.4
 Stable tag: 1.0.0
 License: GPLv2 or later
@@ -44,6 +44,13 @@ Open any image and you can see which scanner found what, how strong each piece o
 A perfect scan reports 97%, not 100%. Proving an image is *used* takes one piece of evidence; proving it is *unused* means proving the absence of evidence everywhere — and "everywhere" is not somewhere you can finish visiting. Theme frameworks store images in ways nobody can fully predict, and page builders can assemble URLs at render time.
 
 The plugin reports the honest number rather than a comfortable one.
+
+== Installation ==
+
+1. Upload the plugin through Plugins > Add New, or upload the ZIP via Plugins > Add New > Upload.
+2. Activate it through the Plugins menu.
+3. Open the new **Image Cleaner** menu in your WordPress admin sidebar.
+4. Click **Start the first scan** on the Dashboard. Nothing is deleted until you decide to act on a recommendation, and nothing is ever removed permanently without first going through the Trash.
 
 == Frequently Asked Questions ==
 

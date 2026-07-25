@@ -108,6 +108,7 @@ final class RestoreManifest {
 
 		return $wpdb->get_row(
 			$wpdb->prepare(
+				// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Tables::manifests() returns a hardcoded prefix+literal identifier (see src/Database/Tables.php), never user input.
 				'SELECT * FROM ' . Tables::manifests() . '
 				 WHERE attachment_id = %d AND restored_at IS NULL
 				 ORDER BY id DESC LIMIT 1',
@@ -132,6 +133,7 @@ final class RestoreManifest {
 
 		return (array) $wpdb->get_results(
 			$wpdb->prepare(
+				// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Tables::manifests() returns a hardcoded prefix+literal identifier (see src/Database/Tables.php), never user input.
 				'SELECT action, created_at, restored_at FROM ' . Tables::manifests() . '
 				 WHERE attachment_id = %d
 				 ORDER BY created_at DESC

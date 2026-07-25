@@ -103,6 +103,7 @@ final class ContentScanner implements Scanner {
 				array_merge( $types, $statuses, array( self::BATCH_SIZE, $offset ) )
 			);
 
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- $sql is the return value of $wpdb->prepare() a few lines above; the sniff cannot trace it across statements.
 			$posts = $wpdb->get_results( $sql );
 
 			if ( null === $posts ) {
@@ -186,6 +187,7 @@ final class ContentScanner implements Scanner {
 		 *
 		 * @param string[] $types
 		 */
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- already carries the plugin's real prefix, "uic_"; the sniff expects the full "unused_image_cleaner_" form.
 		return array_values( (array) apply_filters( 'uic_content_scanner_post_types', $types ) );
 	}
 

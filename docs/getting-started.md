@@ -8,7 +8,7 @@ it's doing, not to ask you for decisions up front.
 
 ## Run your first scan
 
-Open **Media → Image Cleaner** in your WordPress admin. On a fresh install the Dashboard has one
+Open **Image Cleaner** in your WordPress admin sidebar. On a fresh install the Dashboard has one
 thing on it: a **Start the first scan** button. Click it.
 
 The scan reads through your posts, pages, Gutenberg blocks, templates, the Customizer, theme

@@ -92,6 +92,7 @@ final class LogRepository {
 
 		return (array) $wpdb->get_results(
 			$wpdb->prepare(
+				// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Tables::logs() returns a hardcoded prefix+literal identifier (see src/Database/Tables.php), never user input.
 				'SELECT * FROM ' . Tables::logs() . ' ORDER BY id DESC LIMIT %d',
 				$limit
 			)
@@ -116,6 +117,7 @@ final class LogRepository {
 
 		return (array) $wpdb->get_results(
 			$wpdb->prepare(
+				// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Tables::logs() returns a hardcoded prefix+literal identifier (see src/Database/Tables.php), never user input.
 				'SELECT * FROM ' . Tables::logs() . ' WHERE attachment_id = %d ORDER BY id DESC LIMIT %d',
 				$attachment_id,
 				$limit

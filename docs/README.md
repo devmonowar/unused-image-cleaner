@@ -13,3 +13,9 @@ with the maintainer for anything deeper.
 
 For installation requirements, the full changelog, and the short-form FAQ, see the plugin's
 `readme.txt` — that's also what shows up on the plugin's WordPress.org-style listing page.
+
+## Extending the plugin
+
+If you're a developer looking to hook into a scan or add your own scanner, see
+**[Developer Hooks](hooks.md)** instead — everything else in this folder is written for people
+using the plugin as-is.

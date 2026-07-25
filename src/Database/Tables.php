@@ -238,6 +238,7 @@ final class Tables {
 		global $wpdb;
 
 		foreach ( array( self::manifests(), self::logs(), self::reports(), self::references(), self::scans() ) as $table ) {
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- $table is one of this same class's own hardcoded prefix+literal identifiers, never user input.
 			$wpdb->query( "DROP TABLE IF EXISTS {$table}" );
 		}
 

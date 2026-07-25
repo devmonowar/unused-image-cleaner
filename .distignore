@@ -1,0 +1,15 @@
+# Files and folders that should NOT be deployed to WordPress.org.
+/build
+/.git
+/.github
+/.wordpress-org
+/.gitignore
+/.distignore
+/composer.json
+/composer.lock
+/phpcs.xml.dist
+/phpstan.neon.dist
+/tests
+/tools
+/vendor
+/README.md

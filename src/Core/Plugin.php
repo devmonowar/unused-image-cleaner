@@ -77,9 +77,21 @@ final class Plugin {
 		$this->registry->add( new WooCommerceScanner() );
 		$this->registry->add( new GenericFallbackScanner() );
 
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- already carries the plugin's real prefix, "uic_"; the sniff expects the full "unused_image_cleaner_" form.
 		do_action( 'uic_register_scanners', $this->registry );
 
 		register_activation_hook( UIC_FILE, array( Tables::class, 'install' ) );
+
+		// Deactivating pauses the plugin; it must not leave a scan tick firing
+		// into a handler that no longer exists. Uninstall does the same, for the
+		// same reason — this just covers the more common case of a plain
+		// deactivate, without waiting for a full removal.
+		register_deactivation_hook(
+			UIC_FILE,
+			static function (): void {
+				wp_clear_scheduled_hook( 'uic_scan_tick' );
+			}
+		);
 
 		if ( is_admin() ) {
 			( new \UnusedImageCleaner\Admin\Menu() )->register();
